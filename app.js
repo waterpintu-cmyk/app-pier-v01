@@ -10,6 +10,7 @@ const ymd = d => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-$
 const fdate = s => { const [y,m,d] = s.split("-"); return `${+d} ${TH[m-1]} ${+y+543}`; };   // แสดงเป็น พ.ศ.
 const sb = window.supabase.createClient(CFG.url, CFG.anonKey, {auth:{persistSession:true,autoRefreshToken:true}});
 let S = {station:null, roles:[], period:{y:bkk().getFullYear(), m:bkk().getMonth()+1}};
+try{const q=JSON.parse(localStorage.getItem("period")||"null");if(q&&q.y&&q.m>=1&&q.m<=12)S.period=q}catch(e){}
 const has = (...r) => r.some(x => S.roles.includes(x));
 const canWrite = () => has("admin","manager","assistant");
 
@@ -59,12 +60,22 @@ async function boot(){
 // ---------- screens ----------
 const TABS=[["home","🏠","ภาพรวม"],["menu","▦","เมนู"],["add","＋","บันทึก"],["rep","📄","รายงาน"],["me","👤","ฉัน"]];
 const TITLES={home:"ภาพรวม",menu:"เมนูทั้งหมด",add:"บันทึกสถิติผู้โดยสาร",rep:"รายงานประจำเดือน",me:"บัญชีและสิทธิ์",inc:"เหตุการณ์และความปลอดภัย"};
+
+// เลือกเดือน/ปีที่ดู (ค่าเริ่มต้น = เดือนปัจจุบัน) — จำค่าไว้ในเครื่องนี้เท่านั้น
+function periodPicker(){
+  const now=bkk().getFullYear(), ys=[now-1,now,now+1];
+  const w=$("#who"); if(!w) return;
+  w.innerHTML=`<select id="pm" aria-label="เดือน">${MONTHS.map((n,i)=>`<option value="${i+1}"${i+1===S.period.m?" selected":""}>${n}</option>`).join("")}</select>`+
+    `<select id="py" aria-label="ปี">${ys.map(y=>`<option value="${y}"${y===S.period.y?" selected":""}>${y+543}</option>`).join("")}</select>`;
+  const ch=()=>{S.period={y:+$("#py").value,m:+$("#pm").value};try{localStorage.setItem("period",JSON.stringify(S.period))}catch(e){}go(S.tab||"home")};
+  $("#pm").onchange=ch; $("#py").onchange=ch;
+}
 function go(t){
   const tabs = TABS.filter(([k])=> k!=="add" || canWrite());
   $("#nav").innerHTML = tabs.map(([k,i,n])=>`<button class="${k===t?"on":""}" data-t="${k}"><b>${i}</b>${n}</button>`).join("");
   $("#nav").querySelectorAll("button").forEach(b=>b.onclick=()=>go(b.dataset.t));
   $("#ttl").textContent = TITLES[t]||"";
-  $("#who").textContent = `${MONTHS[S.period.m-1]} ${S.period.y+543}`;
+  S.tab=t; periodPicker();
   $("#main").scrollTop=0; V[t]();
 }
 const num = v => v==null ? "–" : Number(v).toLocaleString("th");

@@ -1,5 +1,5 @@
 // แคชเฉพาะไฟล์หน้าแอป (app shell) ไม่แคชคำขอ Supabase/ข้อมูลผู้ใช้ — ยังไม่มีคิวบันทึกออฟไลน์
-const V = "port-shell-v4", FILES = ["./","index.html","styles.css","app.js","pdf.js","menus.js","fonts/Loma.otf","fonts/Loma-Bold.otf","config.js","login.jpg","manifest.webmanifest","icon-192.png","icon-512.png","icon-maskable-512.png","apple-touch-icon.png"];
+const V = "port-shell-v5", FILES = ["./","index.html","styles.css","app.js","pdf.js","menus.js","fonts/Loma.otf","fonts/Loma-Bold.otf","config.js","login.jpg","manifest.webmanifest","icon-192.png","icon-512.png","icon-maskable-512.png","apple-touch-icon.png"];
 self.addEventListener("install", e => e.waitUntil(caches.open(V).then(c => c.addAll(FILES)).then(() => self.skipWaiting())));
 self.addEventListener("activate", e => e.waitUntil(caches.keys().then(k => Promise.all(k.filter(x => x !== V).map(x => caches.delete(x)))).then(() => self.clients.claim())));
 self.addEventListener("fetch", e => {

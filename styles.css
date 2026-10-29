@@ -70,3 +70,7 @@ nav button{flex:1;font-size:11px;color:var(--mute);min-height:48px}nav button b{
 #print .sign{display:grid;grid-template-columns:repeat(3,1fr);gap:8mm;margin-top:14mm;text-align:center}
 #print .sign div{border-top:.3mm solid #14213d;padding-top:2mm;font-size:9.5pt}
 #print .draft{position:fixed;top:45%;left:0;right:0;text-align:center;font-size:60pt;color:rgba(217,83,79,.18);transform:rotate(-25deg);z-index:9}
+
+#who{padding:0;background:transparent;display:inline-flex;gap:4px}
+#who select{font:inherit;font-size:13px;color:#fff;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.3);border-radius:999px;padding:5px 8px;appearance:none;-webkit-appearance:none;text-align:center}
+#who select option{color:#000}
