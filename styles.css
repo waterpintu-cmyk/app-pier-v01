@@ -1,0 +1,72 @@
+:root{--navy:#0c2455;--navy2:#16336f;--bg:#f3f6fc;--card:#fff;--ink:#14213d;--mute:#6b7691;--line:#e3e8f2;--mint:#2fbf8f;--red:#d9534f;--tint:#e8eefb}
+@media(prefers-color-scheme:dark){:root{--bg:#0b1327;--card:#14203d;--ink:#e8eefb;--mute:#93a0bd;--line:#223156;--tint:#1b2b52}}
+*{box-sizing:border-box;margin:0}
+html,body{height:100%;font-family:'Noto Sans Thai',system-ui,sans-serif;background:#050b1a;color:var(--ink)}
+body{display:flex;justify-content:center;padding-top:env(safe-area-inset-top,0)}
+#app{width:100%;max-width:430px;height:100%;position:relative;background:var(--bg);overflow:hidden}
+button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
+:focus-visible{outline:3px solid var(--mint);outline-offset:2px}
+#login{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:#0a2a6e;z-index:5}
+.stage{position:relative;height:100%;max-width:100%;aspect-ratio:941/1672;background:url(login.jpg) center/100% 100% no-repeat}
+.stage>*{position:absolute}
+.fld{left:19.9%;width:60.3%;height:5.1%;border-radius:2.2%/36%;background:#e6e9ee;display:flex;align-items:center;gap:3%;padding:0 4%}
+.fld svg{width:6%;flex:none;stroke:#0c2455;fill:none;stroke-width:1.8}
+.fld input{flex:1;min-width:0;border:0;background:none;font:500 clamp(14px,4vw,17px) 'Noto Sans Thai';color:#0c2455}
+#e1{top:66.1%}#e2{top:72.7%}
+#go{left:19.7%;width:60.6%;top:82.3%;height:5.7%;border-radius:99px;color:transparent}
+#forgot{left:60%;top:79.4%;width:20%;height:2.6%;color:transparent}
+#lerr{left:19.9%;width:60.3%;top:88.6%;text-align:center;color:#fff;font-size:13px;background:rgba(160,30,30,.88);border-radius:10px;padding:4px 8px;display:none}
+#shell{position:absolute;inset:0;display:none;flex-direction:column}
+.top{background:linear-gradient(160deg,var(--navy),var(--navy2));color:#fff;padding:18px 18px 54px;border-radius:0 0 28px 28px}
+.top small{opacity:.75;font-size:12px}.top h1{font-size:19px;font-weight:600;margin-top:2px}
+.pill{display:inline-block;background:#ffffff22;border-radius:99px;padding:3px 10px;font-size:11px;margin-top:8px}
+main{flex:1;overflow:auto;padding:0 16px 16px;margin-top:-38px}
+.card{background:var(--card);border-radius:20px;padding:14px;margin-bottom:12px;box-shadow:0 6px 20px rgba(12,36,85,.08)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.kpi b{display:block;font-size:20px}.kpi span{font-size:12px;color:var(--mute)}
+h2{font-size:15px;font-weight:600;margin:6px 2px 8px}
+label.l{display:block;font-size:13px;color:var(--mute);margin:10px 0 4px}
+.in{width:100%;min-height:48px;border-radius:14px;border:1.5px solid var(--line);background:var(--bg);padding:0 12px;font:inherit;color:var(--ink)}
+.btn{width:100%;min-height:50px;border-radius:99px;background:var(--navy);color:#fff;font-weight:600;margin-top:14px}
+.btn.alt{background:var(--tint);color:var(--navy)}@media(prefers-color-scheme:dark){.btn.alt{color:#fff}}
+.btn:disabled{opacity:.5}
+.err{color:var(--red);font-size:12px;margin-top:3px}
+.tag{font-size:11px;border-radius:99px;padding:3px 9px;background:var(--tint)}
+.note{font-size:12px;color:var(--mute);line-height:1.5;margin-top:6px}
+.steps{display:flex;gap:6px}.steps div{flex:1;text-align:center;font-size:11px;padding:8px 2px;border-radius:12px;background:var(--tint);color:var(--mute)}.steps .on{background:var(--navy);color:#fff}
+nav{display:flex;background:var(--card);border-top:1px solid var(--line);padding:6px 6px calc(6px + env(safe-area-inset-bottom,0))}
+nav button{flex:1;font-size:11px;color:var(--mute);min-height:48px}nav button b{display:block;font-size:20px;font-weight:400}nav .on{color:var(--navy);font-weight:600}
+@media(prefers-color-scheme:dark){nav .on{color:#fff}}
+.toast{position:absolute;left:16px;right:16px;bottom:84px;background:var(--navy);color:#fff;border-radius:14px;padding:12px 14px;font-size:14px;display:none;z-index:9}
+/* ---------- รายงาน PDF (พิมพ์จากเบราว์เซอร์ → บันทึกเป็น PDF ฝังฟอนต์) ---------- */
+@font-face{font-family:ReportThai;src:url(fonts/Loma.otf);font-weight:400}
+@font-face{font-family:ReportThai;src:url(fonts/Loma-Bold.otf);font-weight:700}
+#print{display:none;font-family:ReportThai,'Noto Sans Thai',sans-serif;color:#14213d;font-size:10.5pt;line-height:1.5;background:#fff}
+@page{size:A4;margin:14mm 12mm 16mm;@bottom-center{content:"หน้า " counter(page);font-size:9pt;color:#667}}
+@page land{size:A4 landscape;margin:12mm}
+@media print{
+ html,body{height:auto;background:#fff;display:block;padding:0}
+ #app,.toast{display:none!important}
+ #print{display:block}
+ .land{page:land}
+}
+#print .pg{break-after:page}
+#print .cover{height:255mm;background:#0c2455;color:#fff;padding:30mm 18mm;display:flex;flex-direction:column;justify-content:flex-end;break-after:page}
+#print .cover h1{font-size:26pt;line-height:1.3}#print .cover p{font-size:14pt;margin-top:6mm}
+#print .cover .bar{height:3mm;width:40mm;background:#e4002b;margin-bottom:8mm}
+#print h2{background:#0c2455;color:#fff;padding:2mm 4mm;font-size:13pt;margin:6mm 0 3mm;break-after:avoid}
+#print h3{color:#0c2455;font-size:11.5pt;margin:4mm 0 2mm;border-bottom:.4mm solid #e4002b;break-after:avoid}
+#print table{width:100%;border-collapse:collapse;margin:2mm 0 4mm;font-size:9pt}
+#print th{background:#e8eefb;color:#0c2455}
+#print th,#print td{border:.2mm solid #9aa6bf;padding:1mm 1.6mm;text-align:left;vertical-align:top}
+#print td.n,#print th.n{text-align:right}
+#print thead{display:table-header-group}#print tr{break-inside:avoid}
+#print tr.sum td{background:#f3f6fc;font-weight:700}#print tr.bad td{background:#fde2e1}
+#print .muted{color:#667;font-size:9pt}
+#print .warn{border:.4mm solid #d9534f;color:#8c1f1b;padding:2mm 3mm;margin:2mm 0;font-size:9pt}
+#print .photos{display:grid;grid-template-columns:1fr 1fr;gap:3mm;margin:2mm 0}
+#print .photos figure{break-inside:avoid}#print .photos img{width:100%;height:55mm;object-fit:cover}
+#print figcaption{font-size:8.5pt;color:#445}
+#print .sign{display:grid;grid-template-columns:repeat(3,1fr);gap:8mm;margin-top:14mm;text-align:center}
+#print .sign div{border-top:.3mm solid #14213d;padding-top:2mm;font-size:9.5pt}
+#print .draft{position:fixed;top:45%;left:0;right:0;text-align:center;font-size:60pt;color:rgba(217,83,79,.18);transform:rotate(-25deg);z-index:9}
