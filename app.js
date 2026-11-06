@@ -95,7 +95,39 @@ const V = {
     <div class="card kpi"><b>${num(data.open_maintenance)}</b><span>งานซ่อมค้าง</span></div>
     <div class="card kpi"><b>${num(data.fee_total)}</b><span>ค่าธรรมเนียม (บาท)</span></div>
     <div class="card kpi"><b>${esc(STATUS[data.status]||"ยังไม่มีรายงาน")}</b><span>สถานะรายงาน</span></div></div>
-   <p class="note">เรือ HEAVEN GATE นับแยกจากยอดเรือหลัก: ${num(p.heaven_gate_pax)} คน ${num(p.heaven_gate_rounds)} รอบ · ค่าเฉลี่ยปัดขึ้นอาจต่างจากรายงานเล่มก่อน</p>`;
+   <p class="note">เรือ HEAVEN GATE นับแยกจากยอดเรือหลัก: ${num(p.heaven_gate_pax)} คน ${num(p.heaven_gate_rounds)} รอบ · ค่าเฉลี่ยปัดขึ้นอาจต่างจากรายงานเล่มก่อน</p>
+   <h3 class="sec">รายการรายวัน</h3><div id="dl"><div class="card">กำลังโหลด…</div></div>`;
+  const {y,m}=S.period, a=`${y}-${String(m).padStart(2,"0")}-01`, e=`${y}-${String(m).padStart(2,"0")}-${String(new Date(y,m,0).getDate()).padStart(2,"0")}`;
+  const {data:L,error:le}=await sb.from("passenger_logs").select("*").eq("station_id",S.station.id).gte("log_date",a).lte("log_date",e).order("log_date");
+  if(le) return $("#dl").innerHTML=`<div class="card err">${esc(dbMsg(le))}</div>`;
+  $("#dl").innerHTML=(L&&L.length)?L.map(r=>`<button class="dayrow" data-id="${r.id}"><span><b>${fdate(r.log_date)}</b><small>${r.day_type==="holiday"?"วันหยุด":"วันทำงาน"}${r.note?" · "+esc(r.note):""}</small></span><span class="dtot">${num(r.electric_pax+r.express_pax)} คน ›</span></button>`).join(""):`<div class="card"><small>ยังไม่มีข้อมูลที่บันทึกในเดือนนี้</small></div>`;
+  $("#dl").querySelectorAll(".dayrow").forEach(b=>b.onclick=()=>V.day(L.find(r=>r.id===b.dataset.id)));
+ },
+ day(r){
+  const w=canWrite(), f=(id,l,k)=>`<div><label class="l" for="${id}">${l}</label><input class="in" id="${id}" type="number" inputmode="numeric" min="0" value="${r[k]}" ${w?"":"disabled"}></div>`;
+  $("#main").scrollTop=0;
+  $("#main").innerHTML=`<button class="btn alt" id="bk" style="margin:0 0 12px">‹ กลับ</button>
+   <div class="card"><b style="font-size:18px">${fdate(r.log_date)}</b>
+   <label class="l" for="ft">ประเภทวัน</label><select class="in" id="ft" ${w?"":"disabled"}><option value="workday">วันทำงาน</option><option value="holiday">วันหยุด</option></select>
+   <div class="grid2">${f("fe","เรือไฟฟ้า (คน)","electric_pax")}${f("fx","เรือด่วน (คน)","express_pax")}${f("fm","เร่งด่วนเช้า","morning_peak")}${f("fv","เร่งด่วนเย็น","evening_peak")}${f("fhr","HEAVEN GATE (รอบ)","heaven_gate_rounds")}${f("fhp","HEAVEN GATE (คน)","heaven_gate_pax")}</div>
+   <div class="err" id="r2"></div>
+   <label class="l" for="fn">หมายเหตุ</label><input class="in" id="fn" value="${esc(r.note||"")}" ${w?"":"disabled"}>
+   ${w?`<button class="btn" id="sv">บันทึกการแก้ไข</button>`:`<p class="note">ดูอย่างเดียว (ไม่มีสิทธิ์แก้ไข)</p>`}</div>`;
+  $("#ft").value=r.day_type; $("#bk").onclick=()=>go("home");
+  if(w) $("#sv").onclick=async()=>{
+   const v=id=>$(id).value, n=id=>v(id)===""?NaN:Number(v(id));
+   const u={day_type:v("#ft"),electric_pax:n("#fe"),express_pax:n("#fx"),morning_peak:n("#fm"),evening_peak:n("#fv"),heaven_gate_rounds:n("#fhr"),heaven_gate_pax:n("#fhp"),note:v("#fn").trim()||null};
+   const ks=["electric_pax","express_pax","morning_peak","evening_peak","heaven_gate_rounds","heaven_gate_pax"];
+   $("#r2").textContent="";
+   if(ks.some(k=>!Number.isInteger(u[k])||u[k]<0)) return $("#r2").textContent="กรอกจำนวนเป็นเลขจำนวนเต็มตั้งแต่ 0 ขึ้นไปให้ครบ";
+   if(u.day_type==="holiday"&&u.express_pax>0) return $("#r2").textContent="เรือด่วนไม่วิ่งวันหยุด ต้องเป็น 0";
+   if(u.morning_peak+u.evening_peak!==u.electric_pax+u.express_pax) return $("#r2").textContent=`เช้า+เย็น (${u.morning_peak+u.evening_peak}) ต้องเท่ากับ ไฟฟ้า+เรือด่วน (${u.electric_pax+u.express_pax})`;
+   $("#sv").disabled=true;
+   const {error}=await sb.from("passenger_logs").update(u).eq("id",r.id);
+   $("#sv").disabled=false;
+   if(error) return toast(dbMsg(error));
+   toast("บันทึกการแก้ไขแล้ว"); go("home");
+  };
  },
  add(){
   const t = ymd(bkk());
