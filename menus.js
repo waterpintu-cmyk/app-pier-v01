@@ -1,6 +1,6 @@
 "use strict";
 // เมนูตามลำดับ: (1) เหตุการณ์และความปลอดภัย ✔  ที่เหลือยังไม่ได้สร้าง
-const MENU=[["📊","ภาพรวม","home"],["📝","ข้อมูลรายงาน","rep"],["🚤","สถิติผู้โดยสาร/เรือ","add"],["🚨","เหตุการณ์และความปลอดภัย","inc"],["🔧","เหตุขัดข้อง/ซ่อมบำรุง"],["💳","ค่าธรรมเนียม/นำส่งรายได้"],["📣","ปัญหา/ข้อร้องเรียน/ทรัพย์สิน"],["✅","ตรวจความพร้อมท่าเรือ"],["🗓️","ตารางเรือ/คุณภาพบริการ"],["👥","บุคลากร/เวร/เข้าออก"],["🦺","ตรวจอุปกรณ์"],["📤","ส่งรายงาน/ตรวจรับ","rep"]];
+const MENU=[["📊","ภาพรวม","home"],["📝","ข้อมูลรายงาน","rep"],["🚤","สถิติผู้โดยสาร/เรือ","add"],["🚨","เหตุการณ์และความปลอดภัย","inc"],["🔧","เหตุขัดข้อง/ซ่อมบำรุง"],["💳","ค่าธรรมเนียม/นำส่งรายได้"],["📣","ปัญหา/ข้อร้องเรียน/ทรัพย์สิน"],["✅","ตรวจความพร้อมท่าเรือ","rdy"],["🗓️","ตารางเรือ/คุณภาพบริการ"],["👥","บุคลากร/เวร/เข้าออก"],["🦺","ตรวจอุปกรณ์"],["📤","ส่งรายงาน/ตรวจรับ","rep"]];
 V.menu=()=>{ $("#main").innerHTML=`<div class="menu" style="margin-top:44px;display:grid;grid-template-columns:repeat(3,1fr);gap:8px">${MENU.map(([i,n,t],k)=>`<button class="card" style="min-height:92px;padding:10px 4px;text-align:center;font-size:12px;margin:0" data-k="${k}"><div style="font-size:22px">${i}</div>${esc(n)}${t?"":`<div class="note">ยังไม่ได้สร้าง</div>`}</button>`).join("")}</div>`;
   $("#main").querySelectorAll("[data-k]").forEach(b=>b.onclick=()=>{const t=MENU[b.dataset.k][2]; t?go(t):toast("เมนูนี้ยังไม่ได้สร้าง")}); };
 
@@ -68,5 +68,83 @@ function incForm(row){
       if(ins.error){fail++; if(!up.error) await sb.storage.from("attachments").remove([path]);}   // กันไฟล์กำพร้า
     }
     toast(fail?`บันทึกเหตุการณ์แล้ว แต่แนบภาพไม่สำเร็จ ${fail} ไฟล์ (เปิดรายการแล้วแนบใหม่)`:"บันทึกแล้ว"); V.inc();
+  };
+}
+
+
+// ---------- ตรวจความพร้อมท่าเรือ (2.1) ----------
+const RD_PTS={pontoon1:"โป๊ะเทียบเรือที่ 1",pontoon2:"โป๊ะเทียบเรือที่ 2",pontoon3_express:"โป๊ะเทียบเรือที่ 3 เรือด่วน",pontoon4_ev:"โป๊ะเทียบเรือที่ 4 EV",walkway_bridge:"ทางเดินและสะพานปรับระดับ",terminal:"อาคารผู้โดยสาร"};
+const RD_SYS={pontoon_fender:"โป๊ะ/กันกระแทก",civil:"งานโยธา",lighting_outlets:"ไฟฟ้า/แสงสว่าง/เต้ารับ",fire_detection:"ระบบตรวจจับเพลิง",fire_protection:"ระบบดับเพลิง",communication:"ระบบสื่อสาร",water:"ระบบน้ำ"};
+const RD_DEF={pontoon1:"pontoon_fender",pontoon2:"pontoon_fender",pontoon3_express:"pontoon_fender",pontoon4_ev:"pontoon_fender",walkway_bridge:"civil",terminal:"civil"};
+const RD_PH={before_open:"ก่อนเปิดให้บริการ",close:"ปิดให้บริการ"};
+const RD_W=()=>has("admin","manager","assistant","security");
+V.rdy=async()=>{
+  $("#main").innerHTML=`<div class="card">กำลังโหลด…</div>`;
+  const {y,m}=S.period,p=n=>String(n).padStart(2,"0"),a=`${y}-${p(m)}-01`,b=`${y}-${p(m)}-${p(new Date(y,m,0).getDate())}`;
+  const {data,error}=await sb.from("readiness_checks").select("*,readiness_check_items(point,ready)").eq("station_id",S.station.id).gte("check_date",a).lte("check_date",b).order("check_date",{ascending:false});
+  if(error) return $("#main").innerHTML=`<div class="card err">${esc(dbMsg(error))}</div>`;
+  $("#main").innerHTML=`<button class="btn alt" id="bk" style="margin-top:44px">‹ เมนู</button>
+   ${RD_W()?`<button class="btn" id="new">＋ บันทึกผลตรวจความพร้อม</button>`:""}
+   <h2>ผลตรวจในเดือนนี้ (${data.length})</h2>
+   ${data.map(c=>{const bad=c.readiness_check_items.filter(i=>!i.ready).length;return `<button class="dayrow" data-d="${c.check_date}" data-p="${c.phase}"><span><b>${fdate(c.check_date)}</b><small>${RD_PH[c.phase]} · ตรวจ ${c.readiness_check_items.length}/6 จุด</small></span><span class="dtot" style="color:${bad?"#c0392b":"#2f7d5b"}">${bad?`ไม่พร้อม ${bad} จุด`:"พร้อมทุกจุด"} ›</span></button>`}).join("")||`<p class="note">ยังไม่มีผลตรวจในเดือนนี้</p>`}`;
+  $("#bk").onclick=()=>go("menu");
+  if($("#new")) $("#new").onclick=()=>rdyForm(ymd(bkk()),"before_open");
+  $("#main").querySelectorAll("[data-d]").forEach(x=>x.onclick=()=>rdyForm(x.dataset.d,x.dataset.p));
+};
+async function rdyForm(date,phase){
+  const ro=!RD_W();
+  $("#main").innerHTML=`<div class="card" style="margin-top:44px">กำลังโหลด…</div>`;
+  const {data:ex,error}=await sb.from("readiness_checks").select("*,readiness_check_items(*)").eq("station_id",S.station.id).eq("check_date",date).eq("phase",phase).maybeSingle();
+  if(error) return toast(dbMsg(error));
+  const it={}; (ex?.readiness_check_items||[]).forEach(i=>it[i.point]=i);
+  const today=ymd(bkk());
+  $("#main").innerHTML=`<button class="btn alt" id="bk" style="margin-top:44px">‹ กลับ</button><div class="card" style="margin-top:12px">
+   <div class="grid2"><div><label class="l" for="r_d">วันที่</label><input class="in" id="r_d" type="date" max="${today}" value="${date}" ${ro?"disabled":""}></div>
+   <div><label class="l" for="r_p">รอบ</label><select class="in" id="r_p" ${ro?"disabled":""}>${Object.entries(RD_PH).map(([k,v])=>`<option value="${k}" ${k===phase?"selected":""}>${v}</option>`).join("")}</select></div></div>
+   <p class="note">${ex?"มีผลตรวจของวัน/รอบนี้แล้ว — แก้ไขได้":"ยังไม่มีผลตรวจของวัน/รอบนี้"}</p></div>
+   ${Object.entries(RD_PTS).map(([k,n])=>{const i=it[k]||{ready:true};return `<div class="card" data-pt="${k}"><b>${n}</b>
+    <select class="in rd" style="margin-top:8px" ${ro?"disabled":""}><option value="1" ${i.ready?"selected":""}>พร้อมใช้</option><option value="0" ${i.ready?"":"selected"}>ไม่พร้อมใช้</option></select>
+    <div class="bad" style="display:${i.ready?"none":"block"}">
+     <label class="l">รายละเอียดที่ไม่พร้อม *</label><input class="in dt" value="${esc(i.detail)}" ${ro?"disabled":""}>
+     <label class="l">ระบบที่เกี่ยวข้อง (สร้างงานซ่อมให้อัตโนมัติ)</label><select class="in sy" ${ro||i.maintenance_job_id?"disabled":""}>${Object.entries(RD_SYS).map(([v,l])=>`<option value="${v}" ${v===RD_DEF[k]?"selected":""}>${l}</option>`).join("")}</select>
+     ${i.maintenance_job_id?`<p class="note">มีงานซ่อมผูกไว้แล้ว</p>`:""}</div>
+    <label class="l">หมายเหตุ</label><input class="in nt" value="${esc(i.note)}" ${ro?"disabled":""}>
+    ${ro?"":`<label class="l">แนบภาพ (ถ้ามี)</label><input class="in ph" type="file" accept="image/*" multiple style="padding-top:12px">`}</div>`}).join("")}
+   <div class="err" id="r_e"></div>
+   ${ro?`<p class="note">ดูอย่างเดียว (ไม่มีสิทธิ์แก้ไข)</p>`:`<button class="btn" id="r_sv">บันทึกผลตรวจ</button>`}`;
+  $("#bk").onclick=()=>V.rdy();
+  $("#r_d").onchange=$("#r_p").onchange=()=>{ if($("#r_d").value) rdyForm($("#r_d").value,$("#r_p").value) };
+  $("#main").querySelectorAll("[data-pt]").forEach(c=>c.querySelector(".rd").onchange=e=>c.querySelector(".bad").style.display=e.target.value==="1"?"none":"block");
+  if(ro) return;
+  $("#r_sv").onclick=async()=>{
+    const e=$("#r_e"); e.textContent="";
+    const d=$("#r_d").value, ph=$("#r_p").value;
+    if(!d) return e.textContent="เลือกวันที่"; if(d>today) return e.textContent="วันที่ห้ามเป็นอนาคต";
+    const rows=[...$("#main").querySelectorAll("[data-pt]")].map(c=>({point:c.dataset.pt,ready:c.querySelector(".rd").value==="1",detail:c.querySelector(".dt").value.trim(),sys:c.querySelector(".sy").value,note:c.querySelector(".nt").value.trim()||null,files:[...c.querySelector(".ph").files]}));
+    const miss=rows.find(r=>!r.ready&&!r.detail); if(miss) return e.textContent=`กรอกรายละเอียดที่ไม่พร้อมของ "${RD_PTS[miss.point]}"`;
+    $("#r_sv").disabled=true;
+    const {data:{user}}=await sb.auth.getUser();
+    const {data:ck,error:ce}=await sb.from("readiness_checks").upsert({station_id:S.station.id,check_date:d,phase:ph,inspector_id:user.id},{onConflict:"station_id,check_date,phase"}).select().single();
+    if(ce){$("#r_sv").disabled=false;return toast(dbMsg(ce))}
+    let fail=0, bad=0;
+    for(const r of rows){
+      const old=(ex&&ex.check_date===d&&ex.phase===ph?it[r.point]:null), had=old?.maintenance_job_id||null; let job=had, newJob=null;
+      if(!r.ready&&!job){
+        const {data:j,error:je}=await sb.from("maintenance_jobs").insert({station_id:S.station.id,system:r.sys,equipment:RD_PTS[r.point],reported_on:d,symptom:r.detail}).select().single();
+        if(je){fail++;toast(dbMsg(je));continue} job=newJob=j.id;
+      }
+      const {data:row,error:ie}=await sb.from("readiness_check_items").upsert({check_id:ck.id,station_id:S.station.id,point:r.point,ready:r.ready,detail:r.ready?null:r.detail,note:r.note,maintenance_job_id:job},{onConflict:"check_id,point"}).select().single();
+      if(ie){fail++;if(newJob) await sb.from("maintenance_jobs").delete().eq("id",newJob);toast(dbMsg(ie));continue}
+      if(!r.ready) bad++;
+      for(const f of r.files){
+        const blob=await resizeJpeg(f), path=`${S.station.id}/${row.id}/${crypto.randomUUID()}.jpg`;
+        const up=await sb.storage.from("attachments").upload(path,blob,{contentType:"image/jpeg"});
+        const ins=up.error?{error:up.error}:await sb.from("attachments").insert({station_id:S.station.id,storage_path:path,file_name:f.name,mime_type:"image/jpeg",captured_at:new Date(f.lastModified).toISOString(),place:RD_PTS[r.point],readiness_item_id:row.id});
+        if(ins.error){fail++;if(!up.error) await sb.storage.from("attachments").remove([path])}
+      }
+    }
+    $("#r_sv").disabled=false;
+    if(fail) return toast(`บันทึกไม่ครบ ${fail} รายการ — เปิดผลตรวจนี้เพื่อตรวจและบันทึกซ้ำ`);
+    toast(bad?`บันทึกแล้ว · ไม่พร้อม ${bad} จุด (สร้างงานซ่อมให้แล้ว)`:"บันทึกแล้ว"); V.rdy();
   };
 }
