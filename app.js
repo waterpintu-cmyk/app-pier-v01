@@ -162,18 +162,27 @@ const V = {
   if(has("admin")&&r.status==="submitted") acts.push(["approved","อนุมัติ"]);
   if(has("admin","manager")&&r.status==="submitted") acts.push(["returned","ส่งกลับแก้ไข"]);
   if(has("admin")&&r.status==="approved") acts.push(["returned","เปิดแก้ไข (ส่งกลับ)"]);
-  $("#main").innerHTML=`<div class="card"><div class="steps">${order.map(k=>`<div class="${k===cur?"on":""}">${STATUS[k]}</div>`).join("")}</div>
+  $("#main").innerHTML=`<div class="card"><div class="steps">${order.map(k=>`<button class="${k===cur?"on":""}" data-step="${k}">${STATUS[k]}</button>`).join("")}</div>
+   <p class="note">กดที่สถานะเพื่อเปลี่ยน (เฉพาะผู้มีสิทธิ์): ผู้จัดการกด "ส่งตรวจแล้ว" · ผู้ดูแลระบบกด "อนุมัติแล้ว"</p>
    <p class="note">สถานะ: ${esc(STATUS[r.status])} · รุ่นที่ ${r.revision}</p>
    ${acts.map(([to,l])=>`<button class="btn ${to==="returned"?"alt":""}" data-to="${to}">${l}</button>`).join("")}
    <button class="btn alt" id="pv">ดูตัวอย่าง/พิมพ์ PDF${r.status==="approved"?"":" (ฉบับร่าง)"}</button>
    ${r.status==="approved"&&has("admin")?`<button class="btn alt" id="up">อัปโหลด PDF ที่ส่งจริง (รุ่น ${r.revision})</button>`:""}</div>
    <p class="note">กดพิมพ์ แล้วเลือก "บันทึกเป็น PDF" (ตารางกว้างใช้กระดาษแนวนอนอัตโนมัติบน Chrome/Edge)</p>
    <p class="note">การอนุมัติในแอปไม่ใช่ลายเซ็นกรรมการ · กำหนดส่ง รฟม. ภายในวันที่ 10 ของเดือนถัดไป</p>`;
-  $("#main").querySelectorAll("[data-to]").forEach(b=>b.onclick=async()=>{
-    let c=null; if(b.dataset.to==="returned"){ c=prompt("ระบุเหตุผลที่ส่งกลับ"); if(!c||!c.trim()) return; }
-    b.disabled=true;
-    const {error:e}=await sb.rpc("transition_report",{p_report:r.id,p_to:b.dataset.to,p_comment:c});
-    e?(toast(dbMsg(e)),b.disabled=false):(toast("เปลี่ยนสถานะแล้ว"),go("rep"));
+  const doTrans=async(to,btn)=>{
+    let c=null; if(to==="returned"){ c=prompt("ระบุเหตุผลที่ส่งกลับ"); if(!c||!c.trim()) return; }
+    else if(!confirm(to==="submitted"?"ยืนยันส่งรายงานเดือนนี้เพื่อตรวจ? (หลังส่งจะแก้ข้อมูลไม่ได้จนกว่าจะส่งกลับ)":"ยืนยันอนุมัติรายงานเดือนนี้?")) return;
+    if(btn) btn.disabled=true;
+    const {error:e}=await sb.rpc("transition_report",{p_report:r.id,p_to:to,p_comment:c});
+    e?(toast(dbMsg(e)),btn&&(btn.disabled=false)):(toast("เปลี่ยนสถานะแล้ว"),go("rep"));
+  };
+  $("#main").querySelectorAll("[data-to]").forEach(b=>b.onclick=()=>doTrans(b.dataset.to,b));
+  $("#main").querySelectorAll("[data-step]").forEach(b=>b.onclick=()=>{
+    const k=b.dataset.step; if(k===cur) return toast("รายงานอยู่ในสถานะนี้แล้ว");
+    const hit=acts.find(([to])=>k==="draft"?to==="returned":to===k);
+    if(hit) return doTrans(hit[0],null);
+    toast(k==="submitted"?(cur==="approved"?"อนุมัติแล้ว — ต้องให้ผู้ดูแลระบบเปิดแก้ไขก่อน":"เฉพาะผู้จัดการเท่านั้นที่ส่งตรวจได้"):k==="approved"?(cur==="draft"?"ต้องส่งตรวจก่อนจึงจะอนุมัติได้":"เฉพาะผู้ดูแลระบบเท่านั้นที่อนุมัติได้"):"ส่งกลับแก้ไขได้เฉพาะรายงานที่ส่งตรวจ/อนุมัติแล้ว โดยผู้จัดการหรือผู้ดูแลระบบ");
   });
   $("#pv").onclick=()=>printReport(r.status!=="approved");
   if($("#up")) $("#up").onclick=()=>uploadFinalPdf(r);
