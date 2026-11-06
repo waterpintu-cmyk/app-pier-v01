@@ -158,12 +158,12 @@ const V = {
      e?toast(dbMsg(e)):go("rep")});
   const order=["draft","submitted","approved"], cur=r.status==="returned"?"draft":r.status;
   const acts=[];
-  if(has("manager")&&(r.status==="draft"||r.status==="returned")) acts.push(["submitted","ส่งตรวจ"]);
+  if(has("manager","admin")&&(r.status==="draft"||r.status==="returned")) acts.push(["submitted","ส่งตรวจ"]);
   if(has("admin")&&r.status==="submitted") acts.push(["approved","อนุมัติ"]);
   if(has("admin","manager")&&r.status==="submitted") acts.push(["returned","ส่งกลับแก้ไข"]);
   if(has("admin")&&r.status==="approved") acts.push(["returned","เปิดแก้ไข (ส่งกลับ)"]);
   $("#main").innerHTML=`<div class="card"><div class="steps">${order.map(k=>`<button class="${k===cur?"on":""}" data-step="${k}">${STATUS[k]}</button>`).join("")}</div>
-   <p class="note">กดที่สถานะเพื่อเปลี่ยน (เฉพาะผู้มีสิทธิ์): ผู้จัดการกด "ส่งตรวจแล้ว" · ผู้ดูแลระบบกด "อนุมัติแล้ว"</p>
+   <p class="note">กดที่สถานะเพื่อเปลี่ยน (เฉพาะผู้มีสิทธิ์): ผู้จัดการและผู้ดูแลระบบกด "ส่งตรวจแล้ว" ได้ · เฉพาะผู้ดูแลระบบกด "อนุมัติแล้ว"</p>
    <p class="note">สถานะ: ${esc(STATUS[r.status])} · รุ่นที่ ${r.revision}</p>
    ${acts.map(([to,l])=>`<button class="btn ${to==="returned"?"alt":""}" data-to="${to}">${l}</button>`).join("")}
    <button class="btn alt" id="pv">ดูตัวอย่าง/พิมพ์ PDF${r.status==="approved"?"":" (ฉบับร่าง)"}</button>
@@ -182,7 +182,7 @@ const V = {
     const k=b.dataset.step; if(k===cur) return toast("รายงานอยู่ในสถานะนี้แล้ว");
     const hit=acts.find(([to])=>k==="draft"?to==="returned":to===k);
     if(hit) return doTrans(hit[0],null);
-    toast(k==="submitted"?(cur==="approved"?"อนุมัติแล้ว — ต้องให้ผู้ดูแลระบบเปิดแก้ไขก่อน":"เฉพาะผู้จัดการเท่านั้นที่ส่งตรวจได้"):k==="approved"?(cur==="draft"?"ต้องส่งตรวจก่อนจึงจะอนุมัติได้":"เฉพาะผู้ดูแลระบบเท่านั้นที่อนุมัติได้"):"ส่งกลับแก้ไขได้เฉพาะรายงานที่ส่งตรวจ/อนุมัติแล้ว โดยผู้จัดการหรือผู้ดูแลระบบ");
+    toast(k==="submitted"?(cur==="approved"?"อนุมัติแล้ว — ต้องให้ผู้ดูแลระบบเปิดแก้ไขก่อน":"เฉพาะผู้จัดการหรือผู้ดูแลระบบเท่านั้นที่ส่งตรวจได้"):k==="approved"?(cur==="draft"?"ต้องส่งตรวจก่อนจึงจะอนุมัติได้":"เฉพาะผู้ดูแลระบบเท่านั้นที่อนุมัติได้"):"ส่งกลับแก้ไขได้เฉพาะรายงานที่ส่งตรวจ/อนุมัติแล้ว โดยผู้จัดการหรือผู้ดูแลระบบ");
   });
   $("#pv").onclick=()=>printReport(r.status!=="approved");
   if($("#up")) $("#up").onclick=()=>uploadFinalPdf(r);
