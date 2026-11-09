@@ -43,6 +43,23 @@ $("#forgot").onclick = async () => {
   const {error}=await sb.auth.resetPasswordForEmail(email,{redirectTo:location.origin+location.pathname});
   showErr(x, error ? "ส่งลิงก์ไม่สำเร็จ" : "ส่งลิงก์รีเซ็ตรหัสผ่านไปที่อีเมลแล้ว");
 };
+
+// ---------- โหมดสว่าง/มืด: อัตโนมัติ (ตามเครื่อง) → สว่าง → มืด → อัตโนมัติ ----------
+const THEMES=["auto","light","dark"], TH_ICON={auto:"🌗",light:"☀️",dark:"🌙"}, TH_NAME={auto:"อัตโนมัติ (ตามเครื่อง)",light:"สว่าง",dark:"มืด"};
+function curTheme(){try{const t=localStorage.getItem("theme");return THEMES.includes(t)?t:"auto"}catch(e){return "auto"}}
+function applyTheme(t){
+  const r=document.documentElement; if(t==="auto") r.removeAttribute("data-theme"); else r.setAttribute("data-theme",t);
+  const dark=t==="dark"||(t==="auto"&&matchMedia("(prefers-color-scheme: dark)").matches);
+  const m=document.querySelector('meta[name="theme-color"]'); if(m) m.content=dark?"#0e0b24":"#1b2a6b";
+  const b=$("#themebtn"); if(b){b.textContent=TH_ICON[t]; b.title="โหมด: "+TH_NAME[t]}
+}
+function initTheme(){
+  applyTheme(curTheme());
+  const b=$("#themebtn"); if(b) b.onclick=()=>{const n=THEMES[(THEMES.indexOf(curTheme())+1)%3]; try{localStorage.setItem("theme",n)}catch(e){} applyTheme(n); toast("โหมด: "+TH_NAME[n])};
+  try{matchMedia("(prefers-color-scheme: dark)").addEventListener("change",()=>{if(curTheme()==="auto") applyTheme("auto")})}catch(e){}
+}
+initTheme();
+
 async function boot(){
   const {data:{session}} = await sb.auth.getSession();
   if(!session) return;
@@ -86,7 +103,7 @@ const V = {
   if(error) return $("#main").innerHTML=`<div class="card err">${esc(dbMsg(error))}</div>`;
   const p = data.passengers || {};
   $("#main").innerHTML = `
-   <div class="card" style="background:linear-gradient(160deg,#0a1d47,#1b3a82);color:#fff"><small style="opacity:.75">ผู้โดยสารรวม (เรือไฟฟ้า + เรือด่วน)</small>
+   <div class="card" style="background:linear-gradient(160deg,#1b2a6b,#5a2a8c);color:#fff"><small style="opacity:.75">ผู้โดยสารรวม (เรือไฟฟ้า + เรือด่วน)</small>
     <div style="font-size:30px;font-weight:700">${num(p.total_pax)}</div><small>บันทึกแล้ว ${data.days_recorded} วัน</small></div>
    <div class="grid2">
     <div class="card kpi"><b>${num(p.workday_avg_ceil)}</b><span>เฉลี่ยวันทำงาน (ปัดขึ้น ÷ ${p.workday_count ?? 0} วัน)</span></div>
