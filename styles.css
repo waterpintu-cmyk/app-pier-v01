@@ -1,17 +1,19 @@
-:root{--navy:#1b2a6b;--navy2:#5a2a8c;--bg:#f5f3fb;--card:#fff;--ink:#1c1f3a;--mute:#6e6a8c;--line:#e4e0f0;--mint:#2fbf8f;--red:#d9534f;--tint:#ece9f8}
+@font-face{font-family:ItimLocal;src:url(fonts/Itim-Regular.ttf);font-weight:400 700;font-display:swap}
+@font-face{font-family:ComicNeueLocal;src:url(fonts/ComicNeue-Regular.ttf);font-weight:400;font-display:swap}
+@font-face{font-family:ComicNeueLocal;src:url(fonts/ComicNeue-Bold.ttf);font-weight:700;font-display:swap}
+:root{--font:"Comic Sans MS","Comic Sans",ComicNeueLocal,ItimLocal,system-ui,sans-serif;--navy:#1b2a6b;--navy2:#5a2a8c;--bg:#f5f3fb;--card:#fff;--ink:#1c1f3a;--mute:#6e6a8c;--line:#e4e0f0;--mint:#2fbf8f;--red:#d9534f;--tint:#ece9f8}
 :root[data-theme="dark"]{--bg:#0e0b24;--card:#1a1638;--ink:#ece8fb;--mute:#9c97bf;--line:#2a2552;--tint:#241f4a;--wm:.2;color-scheme:dark}
 @media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e0b24;--card:#1a1638;--ink:#ece8fb;--mute:#9c97bf;--line:#2a2552;--tint:#241f4a;--wm:.2;color-scheme:dark}}
 :root{--wm:.13}
 :root[data-theme="dark"] .dayrow .dtot{color:#cdb9ff}@media(prefers-color-scheme:dark){:root:not([data-theme="light"]) .dayrow .dtot{color:#cdb9ff}}
 *{box-sizing:border-box;margin:0}
-html,body{height:100%;font-family:'Noto Sans Thai',system-ui,sans-serif;background:#0a0719;color:var(--ink)}
+html,body{height:100%;font-family:var(--font);background:#0a0719;color:var(--ink)}
 body{display:flex;justify-content:center;padding-top:env(safe-area-inset-top,0)}
 #app{width:100%;max-width:430px;height:100%;position:relative;background:var(--bg);overflow:hidden}
 #app::before{content:"";position:absolute;inset:0;background:url(cover.jpg) center/cover no-repeat;opacity:var(--wm);pointer-events:none;z-index:0}
 #shell{z-index:1}
-#themebtn{position:absolute;right:16px;top:calc(16px + env(safe-area-inset-top,0px));width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.35);color:#fff;font-size:20px;line-height:1;display:flex;align-items:center;justify-content:center}
 .top{position:relative}
-.top h1,.top small{padding-right:56px}
+
 button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
 :focus-visible{outline:3px solid var(--mint);outline-offset:2px}
 #login{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:#0a2a6e;z-index:5}
@@ -19,14 +21,30 @@ button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
 .stage>*{position:absolute}
 .fld{left:19.9%;width:60.3%;height:5.1%;border-radius:2.2%/36%;background:#e6e9ee;display:flex;align-items:center;gap:3%;padding:0 4%}
 .fld svg{width:6%;flex:none;stroke:#0c2455;fill:none;stroke-width:1.8}
-.fld input{flex:1;min-width:0;border:0;background:none;font:500 clamp(14px,4vw,17px) 'Noto Sans Thai';color:#0c2455}
+.fld input{flex:1;min-width:0;border:0;background:none;font:500 clamp(14px,4vw,17px) 'Comic Sans MS','Comic Sans',ComicNeueLocal,ItimLocal,sans-serif;color:#0c2455}
 #e1{top:66.1%}#e2{top:72.7%}
 #go{left:19.7%;width:60.6%;top:82.3%;height:5.7%;border-radius:99px;color:transparent}
 #forgot{left:60%;top:79.4%;width:20%;height:2.6%;color:transparent}
 #lerr{left:19.9%;width:60.3%;top:88.6%;text-align:center;color:#fff;font-size:13px;background:rgba(160,30,30,.88);border-radius:10px;padding:4px 8px;display:none}
 #shell{position:absolute;inset:0;display:none;flex-direction:column}
-.top{background:linear-gradient(160deg,var(--navy),var(--navy2));color:#fff;padding:18px 18px 54px;border-radius:0 0 28px 28px}
-.top small{opacity:.75;font-size:12px}.top h1{font-size:19px;font-weight:600;margin-top:2px}
+/* ---------- หัวแอป (ตามแบบ: Smart Pier นีออน + โลโก้กระจกม่วง) ---------- */
+.top{position:relative;overflow:hidden;background:linear-gradient(155deg,#26217f 0%,#3d1f9e 52%,#5d22b5 100%);color:#fff;padding:20px 18px 56px;border-radius:0 0 30px 30px}
+.top .waves{position:absolute;left:0;right:0;bottom:0;width:100%;height:46px;fill:none;stroke:rgba(214,190,255,.5);stroke-width:1.2;pointer-events:none}
+.brandrow{position:relative;display:flex;align-items:center;gap:clamp(6px,2vw,14px)}
+.shiptile{flex:none;width:clamp(40px,11.5vw,66px);height:clamp(40px,11.5vw,66px);border-radius:clamp(11px,3vw,18px);display:flex;align-items:center;justify-content:center;background:linear-gradient(145deg,rgba(255,255,255,.26),rgba(255,255,255,.07));border:1px solid rgba(255,255,255,.35);box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 4px 14px rgba(40,10,110,.35)}
+.ship{width:72%;height:72%;fill:none;stroke:#c27bff;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 3px #a855f7) drop-shadow(0 0 9px #8a1fff)}
+.neon,.neon2{font-family:var(--font);font-weight:600;letter-spacing:.02em;white-space:nowrap;user-select:none}
+.neon{color:#c27bff;-webkit-text-stroke:0;text-shadow:0 0 4px #b04dff,0 0 10px #9b30ff,0 0 22px #8a1fff,0 0 40px #7410e8}
+.neon{font-size:clamp(26px,7.9vw,46px);line-height:1.1;flex:1 1 auto;min-width:0}
+.neon2{display:block;opacity:1;margin-top:14px;font-size:clamp(20px,6.1vw,38px);line-height:1.3;font-weight:600;letter-spacing:0;color:#fff;-webkit-text-stroke:0;text-shadow:none}
+.logos{flex:none;display:inline-flex;align-items:center;gap:clamp(6px,2vw,12px);padding:clamp(5px,1.6vw,10px) clamp(8px,2.4vw,16px);border-radius:clamp(12px,3.4vw,20px);background:linear-gradient(135deg,rgba(236,222,255,.62),rgba(190,150,240,.38));-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.55);box-shadow:inset 0 1px 0 rgba(255,255,255,.6),0 4px 16px rgba(40,10,110,.35)}
+.logos img{height:clamp(24px,6.6vw,44px);width:auto;display:block}.logos img:last-child{height:clamp(18px,5vw,34px)}
+.logos i{width:1.5px;height:clamp(20px,5.6vw,36px);background:#3c2a78;opacity:.55}
+.hline{border:0;height:1px;background:rgba(255,255,255,.38);margin:14px 0 12px}
+.titlerow{position:relative;display:flex;align-items:flex-end;justify-content:space-between;gap:12px}
+.top h1{font-size:clamp(26px,7.8vw,42px);font-weight:700;margin:0;line-height:1.2;color:#fff;padding:0}
+#themebtn{flex:none;width:clamp(44px,12vw,62px);height:clamp(44px,12vw,62px);border-radius:50%;font-size:clamp(20px,5.6vw,30px);line-height:1;display:flex;align-items:center;justify-content:center;color:#fff;background:linear-gradient(145deg,rgba(255,255,255,.26),rgba(255,255,255,.08));border:1px solid rgba(255,255,255,.4);box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 4px 14px rgba(40,10,110,.35)}
+.top .pill{background:rgba(255,255,255,.14);font-size:clamp(14px,3.6vw,20px);font-weight:600;margin-top:6px;padding:2px 4px 2px 2px}
 .pill{display:inline-block;background:#ffffff22;border-radius:99px;padding:3px 10px;font-size:11px;margin-top:8px}
 main{flex:1;overflow:auto;padding:0 16px 16px;margin-top:-38px;-webkit-overflow-scrolling:touch}
 .card{background:var(--card);border-radius:20px;padding:14px;margin-bottom:12px;box-shadow:0 6px 20px rgba(27,42,107,.08)}
@@ -53,7 +71,6 @@ nav button{flex:1;font-size:11px;color:var(--mute);min-height:48px}nav button b{
 .menu{grid-template-columns:repeat(3,1fr)!important}
 @media(min-width:700px){
  #app{max-width:860px;box-shadow:0 0 0 1px rgba(255,255,255,.06),0 10px 40px rgba(0,0,0,.35)}
- .top{padding:24px 32px 62px}.top h1{font-size:24px}.top small{font-size:14px}#themebtn{right:28px;top:calc(22px + env(safe-area-inset-top,0px))}
  main{padding:0 32px 28px}
  .card{padding:18px;border-radius:22px}
  .kpi b{font-size:28px}.kpi span{font-size:14px}
@@ -79,7 +96,7 @@ nav button{flex:1;font-size:11px;color:var(--mute);min-height:48px}nav button b{
 #print{display:none;--ink:#1f1f33;--muted:#62627a;--line:#d9d9e3;--tint:#f3f3f8;--navy:#1b2a6b;--red:#6d2b91;--bronze:#9b6fc0;--bronze-soft:#f1eaf7;--ok:#2f7d5b;--warn:#b7791f;--crit:#c0392b;
  font-family:ReportThai,'Noto Sans Thai',sans-serif;color:var(--ink);font-size:12.5px;line-height:1.6;background:#fff}
 #print,#print *{box-sizing:border-box;-webkit-print-color-adjust:exact;print-color-adjust:exact}
-@page{size:A4;margin:14mm 12mm 16mm;@bottom-center{content:"หน้า " counter(page);font-size:9pt;color:#62627a}}
+@page{size:A4;margin:14mm 12mm 16mm;@bottom-center{content:"หน้า " counter(page);font-family:ReportThai;font-size:9pt;color:#62627a}}
 @page cover{size:A4;margin:0;@bottom-center{content:none}}
 @page land{size:A4 landscape;margin:12mm}
 @media print{
@@ -200,3 +217,4 @@ nav button{flex:1;font-size:11px;color:var(--mute);min-height:48px}nav button b{
 #who select option{color:#000}
 
 #print .cover-block{text-shadow:0 0 10px rgba(255,255,255,.9),0 0 3px rgba(255,255,255,.9)}#print .cover .month,#print .cover .month *{text-shadow:none}
+.top #who select{font-size:clamp(14px,3.8vw,20px);font-weight:600;padding:6px 12px}
