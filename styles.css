@@ -253,7 +253,7 @@ nav button{flex:1;font-size:11px;color:var(--mute);min-height:48px}nav button b{
 /* ---------- คอมพิวเตอร์ (PC/โน้ตบุ๊ก) ≥ 1180px: เมนูด้านซ้าย + เนื้อหากว้าง ---------- */
 @media(min-width:1180px){
  #app{max-width:1560px}
- #shell{display:grid!important;grid-template-columns:240px minmax(0,1fr);grid-template-rows:auto minmax(0,1fr)}
+ #shell[style*="flex"]{display:grid!important;grid-template-columns:240px minmax(0,1fr);grid-template-rows:auto minmax(0,1fr)}
  .top{grid-column:1/-1}
  .hero{display:flex;justify-content:center;padding-top:64px}
  .heroimg{width:min(100%,760px);height:auto;min-height:0;object-position:center;-webkit-mask-image:linear-gradient(transparent 0,#000 18%,#000 80%,transparent 100%),linear-gradient(90deg,transparent 0,#000 12%,#000 88%,transparent 100%);-webkit-mask-composite:source-in;mask-image:linear-gradient(transparent 0,#000 18%,#000 80%,transparent 100%),linear-gradient(90deg,transparent 0,#000 12%,#000 88%,transparent 100%);mask-composite:intersect}
