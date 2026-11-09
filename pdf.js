@@ -14,7 +14,7 @@ const timeKnown=ts=>hm(ts)!=="00:00";                                           
 const ceilAvg=(a,n)=>n?Math.ceil(a/n):null;
 const T=(h,rows,o={})=>`<table><thead><tr>${h.map((x,i)=>`<th class="${o.n&&o.n.includes(i)?"r":""}">${esc(x)}</th>`).join("")}</tr></thead><tbody>${rows.map(r=>`<tr class="${r.cls||""}">${(r.c||r).map((x,i)=>`<td class="${o.n&&o.n.includes(i)?"r":""}">${x==null||x===""?"–":(r.raw?x:esc(x))}</td>`).join("")}</tr>`).join("")}</tbody></table>`;
 const monthDays=(y,m)=>new Date(y,m,0).getDate();
-const C={navy:"#2b2a4c",red:"#de3a2f",bronze:"#a8703f",tint:"#f3f3f8",line:"#d9d9e3",muted:"#62627a",ink:"#1f1f33"};
+const C={navy:"#1b2a6b",red:"#6d2b91",bronze:"#9b6fc0",tint:"#f3f3f8",line:"#d9d9e3",muted:"#62627a",ink:"#1f1f33"};
 
 async function loadAll(y,m){
   const sid=S.station.id, p2=n=>String(n).padStart(2,"0"), st=`${y}-${p2(m)}-01`, ny=m===12?y+1:y, nm=m===12?1:m+1, nx=`${ny}-${p2(nm)}-01`;
@@ -166,18 +166,22 @@ function render(D,y,m,urls,draft){
   const sheet=(inner,cls="")=>`<section class="sheet ${cls}">${inner}</section>`;
 
   // ---------- ปก ----------
-  const cover=`<section class="cover">${draft?`<div class="draft">ฉบับร่าง</div>`:""}
-   <div class="cover-top"><img src="logo-smart.png" alt="บริษัท สมาร์ท เทอร์มินอล คอร์ปอเรชั่น จำกัด"><img class="mrta" src="logo-mrta.png" alt="การรถไฟฟ้าขนส่งมวลชนแห่งประเทศไทย"></div>
-   <div class="cover-mid"><div class="cover-block">
-     <div class="eyebrow">รายงานประจำเดือน · MONTHLY OPERATION REPORT</div>
-     <h1><span class="t-sub">รายงานสรุปผลการดำเนินการ</span>${esc(s.name_th)}</h1>
-     <div class="month">ประจำเดือน ${esc(mn)} <small>1–${days} ${esc(TH[m-1])}</small></div>
-     ${s.project_name?`<p class="proj"><span>โครงการ</span>${esc(s.project_name)}</p>`:""}
-   </div></div>
-   <div class="cover-bot">
-     <div class="grp"><h3>ผู้จัดทำและผู้รับรายงาน</h3><div><div class="k">จัดทำโดย</div><div class="v">บริษัท สมาร์ท เทอร์มินอล คอร์ปอเรชั่น จำกัด</div></div><div><div class="k">เสนอ</div><div class="v">การรถไฟฟ้าขนส่งมวลชนแห่งประเทศไทย (รฟม.)</div></div></div>
-     <div class="grp"><h3>ข้อมูลเอกสาร</h3><dl><dt>สัญญาเลขที่</dt><dd>${esc(s.contract_no||"–")}${D.rep&&D.rep.installment_no?` · งวดที่ ${D.rep.installment_no}`:""}</dd><dt>เลขที่เอกสาร</dt><dd>${esc(docNo)}</dd><dt>ช่วงรายงาน</dt><dd>1–${days} ${esc(MONTHS[m-1])} ${y+543}</dd><dt>วันที่จัดทำ</dt><dd>${esc(prepared)}</dd></dl></div>
-   </div><div class="cover-bar"></div></section>`;
+  const cover=`<section class="cover">
+   <div class="cv-top"><img src="logo-smart.png" alt="บริษัท สมาร์ท เทอร์มินอล คอร์ปอเรชั่น จำกัด"><i class="cv-div"></i><img class="mrta" src="logo-mrta.png" alt="การรถไฟฟ้าขนส่งมวลชนแห่งประเทศไทย"></div>
+   <div class="cv-hero"><img class="cv-photo" src="cover.jpg" alt="">
+    <svg class="cv-sw l" viewBox="0 0 400 200" preserveAspectRatio="none"><path d="M0 128 C110 160 250 180 400 190 L400 200 L0 200 Z" fill="#fff"/><path d="M0 114 C110 146 250 166 400 178 L400 190 C250 180 110 160 0 128 Z" fill="#6d2b91"/><path d="M0 100 C110 132 250 152 400 166 L400 178 C250 166 110 146 0 114 Z" fill="#1b2a6b"/></svg>
+    <svg class="cv-sw r" viewBox="0 0 400 200" preserveAspectRatio="none"><path d="M400 72 C290 40 150 20 0 10 L0 0 L400 0 Z" fill="#fff"/><path d="M400 86 C290 54 150 34 0 24 L0 10 C150 20 290 40 400 72 Z" fill="#6d2b91"/><path d="M400 100 C290 68 150 48 0 38 L0 24 C150 34 290 54 400 86 Z" fill="#1b2a6b"/></svg>
+   </div>
+   <div class="cv-main">
+    <div class="cv-title"><i class="cv-slash"></i><div><div class="t-sub">รายงานสรุปผลการดำเนินการ</div><h1>${esc(s.name_th)}</h1></div></div>
+    <i class="cv-rule"></i>
+    ${s.project_name?`<p class="cv-proj">${esc(s.project_name)}</p>`:""}
+    <div class="cv-month"><span>ประจำเดือน ${esc(mn)}</span></div>
+    <div class="cv-line"><i></i>วันที่ 1 – ${days} ${esc(MONTHS[m-1])} ${y+543}</div>
+    <div class="cv-who"><div><span>เสนอ</span><b>การรถไฟฟ้าขนส่งมวลชนแห่งประเทศไทย (รฟม.)</b></div><div class="red"><span>จัดทำโดย</span><b>บริษัท สมาร์ท เทอร์มินอล คอร์ปอเรชั่น จำกัด</b></div></div>
+   </div>
+   <div class="cv-info"><div><span>สัญญาเลขที่</span><b>${esc(s.contract_no||"–")}${D.rep&&D.rep.installment_no?` · งวดที่ ${D.rep.installment_no}`:""}</b></div><div><span>เลขที่เอกสาร</span><b>${esc(docNo)}</b></div><div><span>วันที่จัดทำ</span><b>${esc(prepared)}</b></div></div>
+   <div class="cover-bar"></div></section>`;
 
   // ---------- สรุปภาพรวม ----------
   const kpi=(k,v,u,hl)=>`<div class="kpi${hl?" hl":""}"><div class="k">${esc(k)}</div><div class="v">${v}<small>${esc(u)}</small></div></div>`;
@@ -267,8 +271,10 @@ async function buildReport({y,m},draft){
   const D=await loadAll(y,m), paths=D.atc.filter(a=>/^image\//.test(a.mime_type||"")).map(a=>a.storage_path);
   const urls={}; if(paths.length){const {data}=await sb.storage.from("attachments").createSignedUrls(paths,3600); (data||[]).forEach(d=>{if(d.signedUrl)urls[d.path]=d.signedUrl})}
   let box=$("#print"); if(!box){box=document.createElement("div");box.id="print";document.body.appendChild(box)}
+  const ua=navigator.userAgent, named=/Chrome\//.test(ua)&&!/CriOS|EdgiOS|FxiOS/.test(ua);
+  box.classList.toggle("nonamed",!named);
   box.innerHTML=render(D,y,m,urls,draft);
-  await Promise.all([...box.querySelectorAll("img")].map(i=>i.complete?1:new Promise(r=>{i.onload=i.onerror=r})));
+  await Promise.all([...box.querySelectorAll("img")].map(i=>(i.complete?Promise.resolve():new Promise(r=>{i.onload=i.onerror=r})).then(()=>i.decode?i.decode().catch(()=>{}):0)));
   await document.fonts.ready; return D;
 }
 async function printReport(draft){try{await buildReport(S.period,draft);window.print()}catch(e){toast("สร้างรายงานไม่สำเร็จ: "+(e.message||e))}}
