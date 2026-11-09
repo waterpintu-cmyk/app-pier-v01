@@ -207,7 +207,7 @@ const V = {
  me(){
   $("#main").innerHTML=`<div class="card" style="margin-top:44px"><b>${esc(S.email)}</b>
    <p class="note">บทบาท: ${S.roles.map(r=>esc(ROLE_TH[r]||r)).join(", ")}</p></div>
-   <button class="btn alt" id="out">ออกจากระบบ</button>`;
+   <button class="btn alt" id="out">ออกจากระบบ</button><p class="muted" style="text-align:center;font-size:12px;margin-top:10px">เวอร์ชันแอป v42</p>`;
   $("#out").onclick=async()=>{await sb.auth.signOut();location.reload()};
  }
 };
