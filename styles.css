@@ -89,6 +89,7 @@ nav button{flex:1;font-size:11px;color:var(--mute);min-height:48px}nav button b{
  .menu{grid-template-columns:repeat(6,1fr)!important}
  .grid2:not(:has(>.kpi)){grid-template-columns:repeat(3,1fr)}
 }
+@media(max-width:360px){.menu{grid-template-columns:repeat(2,1fr)!important}.neon2{font-size:19px}}
 @media(max-height:480px) and (orientation:landscape){.top{padding-bottom:46px}}
 /* ---------- รายงาน PDF (พิมพ์จากเบราว์เซอร์ → บันทึกเป็น PDF ฝังฟอนต์) — รูปแบบตามดีไซน์ฉบับปรับปรุง ---------- */
 @font-face{font-family:ReportThai;src:url(fonts/Loma.otf);font-weight:400}
@@ -249,3 +250,23 @@ nav button{flex:1;font-size:11px;color:var(--mute);min-height:48px}nav button b{
 
 .hero .hw{position:absolute;z-index:1;left:calc(18px + clamp(44px,10.5vw,72px)*1.35 + 10px);width:calc(100% - calc(18px + clamp(44px,10.5vw,72px)*1.35 + 10px) - calc(18px + clamp(34px,8vw,56px)*2.3 + 10px));top:calc(env(safe-area-inset-top,0px) + 14px);height:clamp(26px,6vw,40px);fill:none;stroke:rgba(214,190,255,.7);stroke-width:1.6;stroke-linecap:round;vector-effect:non-scaling-stroke;pointer-events:none}
 .hero .hw path{vector-effect:non-scaling-stroke}.hero .hw .f{stroke:rgba(214,190,255,.35)}
+/* ---------- คอมพิวเตอร์ (PC/โน้ตบุ๊ก) ≥ 1180px: เมนูด้านซ้าย + เนื้อหากว้าง ---------- */
+@media(min-width:1180px){
+ #app{max-width:1560px}
+ #shell{display:grid!important;grid-template-columns:240px minmax(0,1fr);grid-template-rows:auto minmax(0,1fr)}
+ .top{grid-column:1/-1}
+ .hero{display:flex;justify-content:center;padding-top:64px}
+ .heroimg{width:min(100%,760px);height:auto;min-height:0;object-position:center;-webkit-mask-image:linear-gradient(transparent 0,#000 18%,#000 80%,transparent 100%),linear-gradient(90deg,transparent 0,#000 12%,#000 88%,transparent 100%);-webkit-mask-composite:source-in;mask-image:linear-gradient(transparent 0,#000 18%,#000 80%,transparent 100%),linear-gradient(90deg,transparent 0,#000 12%,#000 88%,transparent 100%);mask-composite:intersect}
+ .top .neon2{font-size:30px;margin-top:2px}
+ .hline{margin:8px 0 6px}
+ .top h1{font-size:32px}
+ .top{padding-bottom:40px}
+ nav{grid-column:1;grid-row:2;flex-direction:column;justify-content:flex-start;gap:6px;border-top:0;border-right:1px solid var(--line);padding:20px 14px}
+ nav button{flex:none;display:flex;align-items:center;justify-content:flex-start;gap:14px;padding:10px 18px;min-height:58px;border-radius:14px;font-size:17px;text-align:left}
+ nav button b{display:inline-block;width:34px;font-size:24px;text-align:center}
+ nav .on{background:var(--tint)}
+ main{grid-column:2;grid-row:2;padding:20px 40px 36px}
+ main>*{max-width:1180px;margin-left:auto;margin-right:auto}
+ .menu{grid-template-columns:repeat(6,1fr)!important}
+ .toast{bottom:28px}
+}
