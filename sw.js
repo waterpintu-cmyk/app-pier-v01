@@ -1,9 +1,9 @@
 // แคชเฉพาะไฟล์หน้าแอป (app shell) ไม่แคชคำขอ Supabase/ข้อมูลผู้ใช้ — ยังไม่มีคิวบันทึกออฟไลน์
-const V = "port-shell-v44", FILES = ["./","index.html","styles.css","app.js","pdf.js","menus.js","menus2.js","fonts/Loma.otf","fonts/Itim-Regular.ttf","fonts/ComicNeue-Regular.ttf","fonts/ComicNeue-Bold.ttf","fonts/Loma-Bold.otf","config.js","login.jpg","manifest.webmanifest","icon-192.png","icon-512.png","icon-maskable-512.png","apple-touch-icon.png","logo-smart.png","logo-mrta.png","cover.jpg","header.jpg"];
+const V = "port-shell-v46", FILES = ["./","index.html","styles.css","app.js","pdf.js","menus.js","menus2.js","fonts/Loma.otf","fonts/Itim-Regular.ttf","fonts/ComicNeue-Regular.ttf","fonts/ComicNeue-Bold.ttf","fonts/Loma-Bold.otf","config.js","login.jpg","manifest.webmanifest","icon-192.png","icon-512.png","icon-maskable-512.png","apple-touch-icon.png","logo-smart.png","logo-mrta.png","cover.jpg","header.jpg"];
 self.addEventListener("install", e => e.waitUntil(caches.open(V).then(c => c.addAll(FILES)).then(() => self.skipWaiting())));
 self.addEventListener("activate", e => e.waitUntil(caches.keys().then(k => Promise.all(k.filter(x => x !== V).map(x => caches.delete(x)))).then(() => self.clients.claim())));
 self.addEventListener("fetch", e => {
   const u = new URL(e.request.url);
   if (e.request.method !== "GET" || u.origin !== location.origin) return;
-  e.respondWith(fetch(e.request).then(r => { const c = r.clone(); caches.open(V).then(x => x.put(e.request, c)); return r; }).catch(() => caches.match(e.request)));
+  e.respondWith(fetch(e.request).then(r => { const c = r.clone(); caches.open(V).then(x => x.put(e.request, c)); return r; }).catch(() => caches.match(e.request,{ignoreSearch:true})));
 });

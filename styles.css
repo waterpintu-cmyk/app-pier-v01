@@ -238,29 +238,29 @@ nav button{flex:1;font-size:11px;color:var(--mute);min-height:48px}nav button b{
 #print .cover-block{text-shadow:0 0 10px rgba(255,255,255,.9),0 0 3px rgba(255,255,255,.9)}#print .cover .month,#print .cover .month *{text-shadow:none}
 .top #who select{font-size:clamp(14px,3.8vw,20px);font-weight:600;padding:6px 12px}
 
-/* hero header image: water + Smart Pier wordmark, full-bleed, fades into the purple header */
-.top{padding-top:0}
-.hero{position:relative;margin:0 -18px 6px;overflow:hidden;padding-top:clamp(64px,10vw,84px)}
-.heroimg{display:block;width:100%;height:auto;min-height:104px;object-fit:cover;object-position:center 60%;
- -webkit-mask-image:linear-gradient(transparent 0,#000 22%,#000 80%,transparent 100%);mask-image:linear-gradient(transparent 0,#000 22%,#000 80%,transparent 100%)}
-.hero .lg{position:absolute;top:calc(env(safe-area-inset-top,0px) + 10px);z-index:2;width:auto;filter:drop-shadow(0 0 1.5px #fff) drop-shadow(0 0 1.5px #fff) drop-shadow(0 0 7px rgba(255,255,255,.65))}
-.hero .lg-l{left:18px;height:clamp(44px,10.5vw,72px)}
-.hero .lg-r{right:18px;height:clamp(34px,8vw,56px);top:calc(env(safe-area-inset-top,0px) + 14px)}
-.top .neon2{position:relative;margin-top:0}
-
-.hero .hw{position:absolute;z-index:1;left:calc(18px + clamp(44px,10.5vw,72px)*1.35 + 10px);width:calc(100% - calc(18px + clamp(44px,10.5vw,72px)*1.35 + 10px) - calc(18px + clamp(34px,8vw,56px)*2.3 + 10px));top:calc(env(safe-area-inset-top,0px) + 14px);height:clamp(26px,6vw,40px);fill:none;stroke:rgba(214,190,255,.7);stroke-width:1.6;stroke-linecap:round;vector-effect:non-scaling-stroke;pointer-events:none}
-.hero .hw path{vector-effect:non-scaling-stroke}.hero .hw .f{stroke:rgba(214,190,255,.35)}
+/* ---------- หัวแอปแบบกะทัดรัด (~25% ของความสูงจอ): ภาพ Smart Pier + โลโก้มุมบน + ชื่อ/เดือน/ปุ่มโหมดแถวเดียว ---------- */
+.top{padding:0 16px 12px;border-radius:0 0 24px 24px}
+.top .waves,.hero .hw,.hline{display:none}
+.hero{position:relative;margin:0 -16px 0;display:flex;justify-content:center;overflow:hidden}
+.heroimg{display:block;width:min(84%,620px);height:auto;object-fit:cover;
+ -webkit-mask-image:linear-gradient(transparent 0,#000 16%,#000 82%,transparent 100%),linear-gradient(90deg,transparent 0,#000 10%,#000 90%,transparent 100%);-webkit-mask-composite:source-in;
+ mask-image:linear-gradient(transparent 0,#000 16%,#000 82%,transparent 100%),linear-gradient(90deg,transparent 0,#000 10%,#000 90%,transparent 100%);mask-composite:intersect}
+.hero .lg{position:absolute;z-index:2;width:auto;filter:drop-shadow(0 0 1.5px #fff) drop-shadow(0 0 1.5px #fff) drop-shadow(0 0 6px rgba(255,255,255,.6))}
+.hero .lg-l{left:12px;top:calc(env(safe-area-inset-top,0px) + 8px);height:clamp(30px,8vw,52px)}
+.hero .lg-r{right:12px;top:calc(env(safe-area-inset-top,0px) + 12px);height:clamp(22px,5.6vw,38px)}
+.top .neon2{position:relative;margin-top:-4px;font-size:clamp(18px,4.9vw,28px);line-height:1.25}
+.titlerow{align-items:center;margin-top:6px}
+.titlerow>div{display:flex;align-items:center;flex-wrap:wrap;gap:4px 10px;min-width:0}
+.top h1{font-size:clamp(22px,6vw,32px);line-height:1.2}
+.top .pill{margin-top:0;font-size:clamp(13px,3.4vw,18px)}
+#themebtn{width:clamp(38px,9.5vw,50px);height:clamp(38px,9.5vw,50px);font-size:clamp(18px,4.6vw,26px)}
+@media(max-width:360px){.menu{grid-template-columns:repeat(2,1fr)!important}.top .neon2{font-size:17px}}
 /* ---------- คอมพิวเตอร์ (PC/โน้ตบุ๊ก) ≥ 1180px: เมนูด้านซ้าย + เนื้อหากว้าง ---------- */
 @media(min-width:1180px){
  #app{max-width:1560px}
  #shell[style*="flex"]{display:grid!important;grid-template-columns:240px minmax(0,1fr);grid-template-rows:auto minmax(0,1fr)}
  .top{grid-column:1/-1}
- .hero{display:flex;justify-content:center;padding-top:64px}
- .heroimg{width:min(100%,760px);height:auto;min-height:0;object-position:center;-webkit-mask-image:linear-gradient(transparent 0,#000 18%,#000 80%,transparent 100%),linear-gradient(90deg,transparent 0,#000 12%,#000 88%,transparent 100%);-webkit-mask-composite:source-in;mask-image:linear-gradient(transparent 0,#000 18%,#000 80%,transparent 100%),linear-gradient(90deg,transparent 0,#000 12%,#000 88%,transparent 100%);mask-composite:intersect}
- .top .neon2{font-size:30px;margin-top:2px}
- .hline{margin:8px 0 6px}
- .top h1{font-size:32px}
- .top{padding-bottom:40px}
+ .heroimg{width:min(100%,520px)}
  nav{grid-column:1;grid-row:2;flex-direction:column;justify-content:flex-start;gap:6px;border-top:0;border-right:1px solid var(--line);padding:20px 14px}
  nav button{flex:none;display:flex;align-items:center;justify-content:flex-start;gap:14px;padding:10px 18px;min-height:58px;border-radius:14px;font-size:17px;text-align:left}
  nav button b{display:inline-block;width:34px;font-size:24px;text-align:center}
